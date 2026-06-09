@@ -2,8 +2,8 @@
 
 ## Candidate Information
 
-- **Name**: [YOUR NAME]
-- **Email**: [YOUR EMAIL]
+- **Name**: Keira Victoria
+- **Email**: keiraVictoria.dev@outlook.com
 
 ## Contract Address
 
@@ -72,7 +72,7 @@ Open http://localhost:3000
 
 ## GitHub Repository
 
-[YOUR GITHUB REPO URL]
+https://github.com/fullstackDev0404
 
 ## Screenshots
 
