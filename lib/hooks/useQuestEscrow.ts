@@ -139,6 +139,10 @@ export function useQuestList() {
 /** Implement write helpers with useWriteContract + useWaitForTransactionReceipt. */
 export function useCreateQuest() {
   const { isConnected } = useAccount();
+  const { writeContract, data: hash, isPending } = useWriteContract();
+  const { isLoading: isConfirming } = useWaitForTransactionReceipt({
+    hash,
+  });
 
   const createEthQuest = async (_input: {
     title: string;
@@ -148,11 +152,24 @@ export function useCreateQuest() {
     reviewPeriodHours: number;
   }) => {
     if (!isConnected) throw new Error("Connect MetaMask or another Web3 wallet first");
-    // TODO: useWriteContract → createQuest with value: parseEther(rewardEth), token: zeroAddress
-    throw new Error("TODO: implement useCreateQuest.createEthQuest");
+
+    writeContract({
+      address: QUEST_ESCROW_ADDRESS,
+      abi: questEscrowAbi,
+      functionName: "createQuest",
+      args: [
+        _input.title,
+        _input.description,
+        parseEther(_input.rewardEth),
+        BigInt(Math.floor(_input.acceptDeadline.getTime() / 1000)),
+        BigInt(_input.reviewPeriodHours * 3600),
+        zeroAddress,
+      ],
+      value: parseEther(_input.rewardEth),
+    });
   };
 
-  return { createEthQuest, isPending: false };
+  return { createEthQuest, isPending: isPending || isConfirming };
 }
 
 export function useQuestActions(questId: bigint) {
