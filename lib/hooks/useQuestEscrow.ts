@@ -173,30 +173,64 @@ export function useCreateQuest() {
 }
 
 export function useQuestActions(questId: bigint) {
+  const { writeContract, data: hash, isPending } = useWriteContract();
+  const { isLoading: isConfirming } = useWaitForTransactionReceipt({
+    hash,
+  });
+
   const accept = async () => {
-    // TODO: writeContract acceptQuest(questId)
-    throw new Error("TODO: implement accept");
-  };
-  const submit = async (_deliverableUri: string) => {
-    // TODO: writeContract submitWork(questId, deliverableUri)
-    throw new Error("TODO: implement submit");
-  };
-  const approve = async () => {
-    // TODO: writeContract approveAndPay(questId)
-    throw new Error("TODO: implement approve");
-  };
-  const claimTimeout = async () => {
-    // TODO: writeContract claimTimeoutPayout(questId)
-    throw new Error("TODO: implement claimTimeout");
-  };
-  const cancel = async () => {
-    // TODO: writeContract cancelQuest(questId)
-    throw new Error("TODO: implement cancel");
-  };
-  const refund = async () => {
-    // TODO: writeContract refundPoster(questId)
-    throw new Error("TODO: implement refund");
+    writeContract({
+      address: QUEST_ESCROW_ADDRESS,
+      abi: questEscrowAbi,
+      functionName: "acceptQuest",
+      args: [questId],
+    });
   };
 
-  return { accept, submit, approve, claimTimeout, cancel, refund, isPending: false };
+  const submit = async (_deliverableUri: string) => {
+    writeContract({
+      address: QUEST_ESCROW_ADDRESS,
+      abi: questEscrowAbi,
+      functionName: "submitWork",
+      args: [questId, _deliverableUri],
+    });
+  };
+
+  const approve = async () => {
+    writeContract({
+      address: QUEST_ESCROW_ADDRESS,
+      abi: questEscrowAbi,
+      functionName: "approveAndPay",
+      args: [questId],
+    });
+  };
+
+  const claimTimeout = async () => {
+    writeContract({
+      address: QUEST_ESCROW_ADDRESS,
+      abi: questEscrowAbi,
+      functionName: "claimTimeoutPayout",
+      args: [questId],
+    });
+  };
+
+  const cancel = async () => {
+    writeContract({
+      address: QUEST_ESCROW_ADDRESS,
+      abi: questEscrowAbi,
+      functionName: "cancelQuest",
+      args: [questId],
+    });
+  };
+
+  const refund = async () => {
+    writeContract({
+      address: QUEST_ESCROW_ADDRESS,
+      abi: questEscrowAbi,
+      functionName: "refundPoster",
+      args: [questId],
+    });
+  };
+
+  return { accept, submit, approve, claimTimeout, cancel, refund, isPending: isPending || isConfirming };
 }
